@@ -48,10 +48,21 @@ struct slrdata_t
 typedef struct slrdata_t slrdata_t;
 typedef struct slrdata_create_t slrdata_create_t;
 
-int slrdata_open(slrdata_t *d, const char *restrict filepath, bool readonly);
+int slrdata_open(slrdata_t *d, const char *restrict foldername, const char *restrict filename, bool readonly, bool is_relation);
 
 void slrdata_close(slrdata_t *d);
 
 int slrdata_create(slrdata_create_t *c, const char *restrict foldername);
 
+uint_fast64_t slrdata_arity(slrdata_t *relation);
+
+uint_fast64_t slrdata_degree(slrdata_t *relation, uint_fast64_t e);
+
+uint_fast64_t * slrdata_tuple(slrdata_t *relation, uint_fast64_t e, uint_fast64_t i);
+
+uint_fast64_t slrdata_element_count(slrdata_t *d);
+
+uint_fast64_t slrdata_relation_count(slrdata_t *d);
+
+uint_fast64_t slrdata_tuple_count(slrdata_t *relation);
 
