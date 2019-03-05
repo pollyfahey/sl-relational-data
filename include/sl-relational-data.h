@@ -2,57 +2,21 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef struct slrdata_element_t slrdata_element_t;
-
-struct slrdata_element_t {
-	uint_fast64_t id;
-	unsigned char *label;
-	slrdata_element_t *element_next;
-};
-
-typedef struct slrdata_tuple_t slrdata_tuple_t;
-
-struct slrdata_tuple_t {
-	// pointer to an array of element ids
-	uint_fast64_t *elements;
-	slrdata_tuple_t *tuple_next;
-};
-
-typedef struct slrdata_relation_t slrdata_relation_t;
-
-struct slrdata_relation_t {
-	uint_fast64_t arity;
-	uint_fast64_t tuple_count;
-	const char *restrict label;
-	slrdata_tuple_t *tuples;
-	slrdata_relation_t *relation_next;
-};
-
-struct slrdata_create_t
-{
-	uint_fast64_t degree;
-	uint_fast64_t element_count;
-	uint_fast64_t relation_count;
-	slrdata_element_t *elements;
-	slrdata_relation_t *relations;
-};
-
 struct slrdata_t
 {
 	int fd;
-	void *ptr;
+	unsigned char *ptr;
 	uint_fast64_t size;
 	bool readonly;
+	const char *restrict foldername;
+	const char *restrict filename;
 };
 
 typedef struct slrdata_t slrdata_t;
-typedef struct slrdata_create_t slrdata_create_t;
 
 int slrdata_open(slrdata_t *d, const char *restrict foldername, const char *restrict filename, bool readonly, bool is_relation);
 
 void slrdata_close(slrdata_t *d);
-
-int slrdata_create(slrdata_create_t *c, const char *restrict foldername);
 
 uint_fast64_t slrdata_arity(slrdata_t *relation);
 
@@ -65,4 +29,20 @@ uint_fast64_t slrdata_element_count(slrdata_t *d);
 uint_fast64_t slrdata_relation_count(slrdata_t *d);
 
 uint_fast64_t slrdata_tuple_count(slrdata_t *relation);
+
+uint_fast64_t * slrdata_ith_tuple(slrdata_t *relation, uint_fast64_t i);
+
+int slrdata_create_directory(const char *restrict foldername);
+
+int slrdata_create_element_file(slrdata_t *d, const char *restrict foldername);
+
+int slrdata_create_relation_file(slrdata_t *d, const char *restrict foldername, const char *restrict relationname);
+
+int slrdata_add_element(slrdata_t *d, const char *restrict label);
+
+int slrdata_add_tuple(slrdata_t *d, uint_fast64_t * tuple, uint_fast64_t arity);
+
+int slrdata_add_incidence_lists(slrdata_t *relation, slrdata_t *elements, uint_fast64_t norm_degree, uint_fast64_t max_degree);
+
+int slrdata_reduce_size(slrdata_t *rel);
 
